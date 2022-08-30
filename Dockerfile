@@ -1,9 +1,8 @@
-# syntax=docker/dockerfile:1
 FROM python:3.10-alpine
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONFAULTHANDLER 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update && apk add --no-cache \
@@ -17,7 +16,8 @@ RUN mkdir /code
 WORKDIR /code
 
 # Install dependencies into a virtualenv
-COPY requirements.txt /code/
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy project code
