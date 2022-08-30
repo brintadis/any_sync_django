@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SpotifyConfig(AppConfig):
+class PlaylistConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.spotify'
+    name = 'any_sync.playlist'

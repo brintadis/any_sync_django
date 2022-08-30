@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1lpum04%8%$95s%k_3)(xt)kx(m#=gk42rfd@0w(by-1yg3uzk'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", 'change_me')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'apps.accounts',
-    'apps.playlist',
+    'any_sync.accounts',
+    'any_sync.playlist',
 
-    'apps.spotify',
-    'apps.ya_music',
+    'any_sync.spotify',
+    'any_sync.ya_music',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'any_sync.urls'
+ROOT_URLCONF = 'any_sync.any_sync.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'any_sync.wsgi.application'
+WSGI_APPLICATION = 'any_sync.any_sync.wsgi.application'
 
 
 # Database
@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'any_sync.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ["POSTGRES_DB"],
-        "USER": os.environ["POSTGRES_USER"],
-        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
-        "HOST": os.environ["POSTGRES_HOST"],
+        "NAME": os.environ.get("POSTGRES_DB", 'mydatabase'),
+        "USER": os.environ.get("POSTGRES_USER", 'postgres'),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", 'mypassword'),
+        "HOST": os.environ.get("POSTGRES_HOST", 'localhost'),
         "PORT": "5432",
     }
 }

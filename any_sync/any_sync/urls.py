@@ -17,16 +17,16 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from any_sync.any_sync.settings import base
-from any_sync.views import pageNotFound
+from django.conf import settings
+from any_sync.any_sync.views import pageNotFound
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    # path('accounts/', include('any_sync.accounts.urls')),
 ]
 
-if base.DEBUG:
-    urlpatterns += static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = pageNotFound
