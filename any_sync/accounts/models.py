@@ -46,11 +46,12 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField(
-        verbose_name='email address',
+        verbose_name='Email address',
         max_length=255,
         unique=True,
     )
     is_active = models.BooleanField(default=True)
+    registration_date = models.DateTimeField(verbose_name="Registration date", auto_now_add=True)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
 
