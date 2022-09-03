@@ -17,7 +17,7 @@
 					Привет, {{ user.username }}
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="#">Мой AnySync</a>
+						<a class="dropdown-item" href="{% url 'profile' user.id %}">Мой AnySync</a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="#">Настройки</a>
 					</div>
@@ -30,7 +30,7 @@
 					</li>
 				{% endif %}
 				<li class="nav-item">
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{% url 'logout' %}">
 						<button class="btn btn-outline-light my-2 my-sm-0" type="submit">Выйти</button>
 					</a>
 				</li>

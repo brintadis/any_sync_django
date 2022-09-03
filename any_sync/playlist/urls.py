@@ -1,7 +1,7 @@
-from django.urls import path, re_path
+from django.urls import path
 
-from .views import *
+from .views import show_playlist
 
 urlpatterns = [
-    path("<int:playlist_id>/", show_playlist, name="playlist")
+    path("<int:playlist_id>/", show_playlist, name="playlist"),
 ]

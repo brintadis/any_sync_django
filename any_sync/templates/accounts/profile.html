@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-5 mb-5 text-center">
+    <div class="col">
+        <h2 class="mb-3">AnySync</h2>
+        <a href="#" type="button" class="btn btn-secondary">Добавить новый плейлист</a>
+        <div class="btn-group dropright">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Синхронизация плейлистов
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#"><i class="fa-brands fa-spotify mr-2"></i>Spotify</a>
+                <a class="dropdown-item" href="#"><i class="fa-brands fa-yandex pr-2 mr-2"></i>Yandex Music</a>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<h4 class="text-center">Мои плейлисты</h4>
+<hr>
+<div class="row mt-3">
+    {% for playlist in playlists %}
+        <div class="col-4 mb-3">
+            <div class="card text-center" style="width: 18rem;">
+                <img class="card-img-top" src="{{ playlist.img_cover_url }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title" id="{{ playlist.id }}">{{ playlist.playlist_name }}</h5>
+                    <p class="card-text">
+                        Количество треков: {{ playlist.tracks_count }}
+                    </p>
+                    <p class="card-text">Создатель плейлиста: <br>{{ playlist.owner_name }}</p>
+                    <p class="card-text">Последнее обновление: <br>{{ playlist.last_update }}</p>
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn btn-dark">Открыть</a>
+                        </div>
+                        <div class="col">
+                            <div class="btn-group dropup">
+                                <button type="button" class="p-2 btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <!-- Dropdown menu links -->
+                                    <a class="dropdown-item" href="#">Редактировать</a>
+                                    <a class="dropdown-item" href="#">Удалить</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

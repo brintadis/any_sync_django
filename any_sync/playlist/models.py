@@ -18,7 +18,7 @@ class Playlist(models.Model):
     playlist_name = models.CharField(null=False, max_length=90, verbose_name="Playlist name")
     owner_name = models.CharField(null=False, max_length=50, verbose_name="Owner name")
     last_update = models.DateTimeField(auto_now_add=True, verbose_name="Last update")
-    description = models.TextField(null=True, verbose_name="Description")
+    description = models.TextField(null=True, blank=True, verbose_name="Description")
     img_cover_url = models.CharField(
         null=True,
         max_length=255,
@@ -39,11 +39,12 @@ class Playlist(models.Model):
     def get_absolute_url(self):
         return reverse('playlist', kwargs={'playlist_id': self.pk})
 
+    @property
     def tracks_count(self):
         """
         Playlist's count tracks
         """
-        return Track.objects.filter(playlist=self.playlist).count
+        return Track.objects.filter(playlist=self.id).count()
 
 
 class Track(models.Model):
