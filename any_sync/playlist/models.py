@@ -37,7 +37,7 @@ class Playlist(models.Model):
         return f"{self.playlist_name} {self.owner_name}"
 
     def get_absolute_url(self):
-        return reverse('playlist', kwargs={'playlist_id': self.pk})
+        return reverse('playlist_detail', kwargs={'playlist_id': self.pk})
 
     @property
     def tracks_count(self):
@@ -54,7 +54,7 @@ class Track(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, verbose_name="Playlist")
     artist = models.CharField(null=False, max_length=90, verbose_name="Artist")
     track_name = models.CharField(null=False, max_length=255, verbose_name="Track name")
-    duration = models.TimeField(null=False, verbose_name="Duration")
+    duration = models.CharField(null=False, max_length=20, verbose_name="Duration")
     img_cover_url = models.CharField(null=True, max_length=255, verbose_name="Track's cover url")
 
     class Meta:
