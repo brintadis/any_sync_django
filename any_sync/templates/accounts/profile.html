@@ -33,7 +33,7 @@
                     <p class="card-text">Последнее обновление: <br>{{ playlist.last_update }}</p>
                     <div class="row">
                         <div class="col">
-                            <a href="#" class="btn btn-dark">Открыть</a>
+                            <a href="{{ playlist.get_absolute_url }}" class="btn btn-dark">Открыть</a>
                         </div>
                         <div class="col">
                             <div class="btn-group dropup">
@@ -43,7 +43,7 @@
                                 <div class="dropdown-menu">
                                     <!-- Dropdown menu links -->
                                     <a class="dropdown-item" href="#">Редактировать</a>
-                                    <a class="dropdown-item" href="#">Удалить</a>
+                                    <a class="dropdown-item" href="{% url 'delete_playlist' playlist_id=playlist.id user_id=user.id %}">Удалить</a>
                                 </div>
                             </div>
                         </div>
