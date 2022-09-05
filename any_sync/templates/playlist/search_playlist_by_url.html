@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-5">
+	<div class="col">
+		<h4 class="pt-3 text-center">Создание плейлиста</h4>
+		<form action="{% url 'add_playlist' %}" method="post">
+			{% csrf_token %}
+			{% load widget_tweaks %}
+			<div class="form-group">
+				<label for="playlist_url">Ссылка на плейлист:</label>
+				{% render_field form.playlist_url class="form-control" name="playlist_url" %}
+			</div>
+			<div class="form-group">
+				<label for="playlist_url">Музыкальный сервис:</label>
+				{% render_field form.music_service class="form-control" name="music_service" %}
+			</div>
+			<button type="submit" class="btn btn-primary">Отправить</button>
+		</form>
+	</div>
+	<div class="col-5 text-center mx-auto">
+		<div class="list-group list-group-flush">
+			<h4 class="list-group-item">Доступные музыкальные сервисы:</h4>
+			<a href="https://www.spotify.com/" class="list-group-item list-group-item-action">
+				<i class="fa-brands fa-spotify pr-3"></i>Spotify
+			</a>
+			<a href="https://music.yandex.ru/" class="list-group-item list-group-item-action">
+				<i class="fa-brands fa-yandex pr-3"></i>Yandex Music
+			</a>
+			<span class="list-group-item list-group-item-action disabled">
+				В разработке:
+			</span>
+			<a href="https://music.apple.com/" class="list-group-item list-group-item-action disabled">
+				<i class="fa-brands fa-itunes pr-3"></i>Apple Music
+			</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
