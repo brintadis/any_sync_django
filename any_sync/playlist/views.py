@@ -1,6 +1,19 @@
 from django.shortcuts import render, redirect
 
+from .forms import SearchPlaylistByUrlForm
 from .models import Playlist, Track
+
+
+def add_playlist(request):
+    if request.method == 'POST':
+        form = SearchPlaylistByUrlForm(request.POST)
+        print(form.is_valid)
+        if form.is_valid():
+            return redirect('home')
+    else:
+        form = SearchPlaylistByUrlForm()
+
+    return render(request, 'playlist/search_playlist_by_url.html', {'form': form})
 
 
 def show_playlist(request, playlist_id):
