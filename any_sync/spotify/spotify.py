@@ -1,3 +1,4 @@
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -10,23 +11,22 @@ class ImportSpotifyPlaylistByUrl:
     """Importing a spotify's playlist by url, then saving into db
 
     Args:
-            playlist_url (`str`): An url of a playlist.
-            user_id: Current user id.
+        playlist_url (`str`): An url of a playlist.
+        user(`User model instance`): Current user instance.
     """
     def __init__(self, playlist_url, user) -> None:
         self.playlist_url = playlist_url
         self.user = user
-        self.client_credentials_manager = SpotifyClientCredentials(
-                client_id='05aecee3d14b494d89ee2fcf8faede62',
-                client_secret='b28942419390419881759ed6ccc7e2cc'
-            )
-        self.sp = spotipy.Spotify(client_credentials_manager=self.client_credentials_manager)
+        self.auth_manager = SpotifyClientCredentials(
+            client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
+            client_secret=os.environ.get('SPOTIFY_CLIENT_SECRET'),
+        )
+        self.sp = spotipy.Spotify(auth_manager=self.auth_manager)
 
     def get_playlist_tracks(self, playlist_id):
         """Playlist's tracks
 
         Args:
-            spotipy_client (spotipy client): spotipy cient
             playlist_id: playlist id
 
         Returns:
