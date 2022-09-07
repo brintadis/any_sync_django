@@ -4,7 +4,7 @@
 <div class="row mt-5">
 	<div class="col">
 		<h4 class="pt-3 text-center">Создание плейлиста</h4>
-		<form action="{% url 'add_playlist' %}" method="post">
+		<form action="{% url 'import_playlist_by_url' %}" method="post">
 			{% csrf_token %}
 			{% load widget_tweaks %}
 			<div class="form-group">

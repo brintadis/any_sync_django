@@ -2,13 +2,26 @@ from django.shortcuts import render, redirect
 
 from .forms import SearchPlaylistByUrlForm
 from .models import Playlist, Track
+from spotify.spotify import ImportSpotifyPlaylistByUrl
 
 
-def add_playlist(request):
+def import_playlist_by_url(request):
     if request.method == 'POST':
         form = SearchPlaylistByUrlForm(request.POST)
-        print(form.is_valid)
         if form.is_valid():
+            playlist_url = form.cleaned_data['playlist_url']
+            current_user = request.user
+
+            if 'Spotify' == form.cleaned_data['music_service']:
+                print("Working with spotify")
+                import_playlist = ImportSpotifyPlaylistByUrl(
+                    playlist_url=playlist_url,
+                    user=current_user,
+                )
+                import_playlist.get_spotify_playlist_by_url()
+                return redirect('profile', user_id=current_user.id)
+            elif 'Yandex Music' == form.cleaned_data['music_service']:
+                print("Working with yandex_music")
             return redirect('home')
     else:
         form = SearchPlaylistByUrlForm()

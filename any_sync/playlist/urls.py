@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import add_playlist, show_playlist, delete_playlist, delete_track
+from .views import import_playlist_by_url, show_playlist, delete_playlist, delete_track
 
 urlpatterns = [
     path("<int:playlist_id>/", show_playlist, name="playlist_detail"),
@@ -14,5 +14,5 @@ urlpatterns = [
         delete_track,
         name="delete_track"
     ),
-    path("add-playlist/", add_playlist, name="add_playlist")
+    path("import-playlist-by-url/", import_playlist_by_url, name="import_playlist_by_url")
 ]
