@@ -12,6 +12,17 @@
 	<body>
 		{% include 'menu.html' %}
 		<div class="container">
+			<div class="col-4">
+				{% if messages %}
+				<div class="alert alert-warning" role="alert">
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+			</div>
 			{% block content %}
 			{% endblock %}
 		</div>

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from .forms import SearchPlaylistByUrlForm
 from .models import Playlist, Track
@@ -14,21 +15,28 @@ def import_playlist_by_url(request):
             current_user = request.user
 
             if 'Spotify' == form.cleaned_data['music_service']:
-                print("Working with spotify")
-                import_playlist = ImportSpotifyPlaylistByUrl(
-                    playlist_url=playlist_url,
-                    user=current_user,
-                )
-                import_playlist.get_spotify_playlist_by_url()
-                return redirect('profile', user_id=current_user.id)
+                try:
+                    import_playlist = ImportSpotifyPlaylistByUrl(
+                        playlist_url=playlist_url,
+                        user=current_user,
+                    )
+                    import_playlist.get_spotify_playlist_by_url()
+                    return redirect('profile', user_id=current_user.id)
+                except Exception:
+                    messages.error(request, 'Несуществующий плейлист в Spotify')
+                    return redirect('import_playlist_by_url')
             elif 'Yandex Music' == form.cleaned_data['music_service']:
-                print("Working with yandex_music")
-                import_playlist = ImportYandexMusicPlaylistByUrl(
-                    playlist_url=playlist_url,
-                    user=current_user,
-                )
-                import_playlist.get_yandex_playlist_by_url()
-                return redirect('profile', user_id=current_user.id)
+                try:
+                    import_playlist = ImportYandexMusicPlaylistByUrl(
+                        playlist_url=playlist_url,
+                        user=current_user,
+                    )
+                    import_playlist.get_yandex_playlist_by_url()
+                    return redirect('profile', user_id=current_user.id)
+                except Exception:
+                    messages.error(request, 'Несуществующий плейлист в Yandex Music')
+                    return redirect('import_playlist_by_url')
+
             return redirect('home')
     else:
         form = SearchPlaylistByUrlForm()
