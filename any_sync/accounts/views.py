@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from .forms import CustomUserCreationForm
 from playlist.models import Playlist
@@ -12,6 +13,7 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
+@login_required
 def profile(request, user_id):
     playlists = Playlist.objects.filter(user=user_id).all()
 
