@@ -18,7 +18,8 @@ def profile(request, user_id):
     playlists = Playlist.objects.filter(user=user_id).all()
 
     context = {
-        "playlists": playlists
+        "playlists": playlists,
+        "user_id": user_id,
     }
 
     return render(request, "accounts/profile.html", context=context)

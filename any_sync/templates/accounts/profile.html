@@ -4,6 +4,7 @@
 <div class="row mt-5 mb-5 text-center">
     <div class="col">
         <h2 class="mb-3">AnySync</h2>
+        {% if user.id == user_id %}
         <a href="{% url 'import_playlist_by_url' %}" type="button" class="btn btn-secondary">Импортировать плейлист</a>
         <div class="btn-group dropright">
             <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -14,6 +15,7 @@
                 <a class="dropdown-item" href="#"><i class="fa-brands fa-yandex pr-2 mr-2"></i>Yandex Music</a>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 <hr>
@@ -40,11 +42,13 @@
                                 <button type="button" class="p-2 btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa-solid fa-ellipsis"></i>
                                 </button>
+                                {% if user.id == user_id %}
                                 <div class="dropdown-menu">
                                     <!-- Dropdown menu links -->
                                     <a class="dropdown-item" href="#">Редактировать</a>
                                     <a class="dropdown-item" href="{% url 'delete_playlist' playlist_id=playlist.id user_id=user.id %}">Удалить</a>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
