@@ -1,5 +1,7 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from .forms import SearchPlaylistByUrlForm
 from .models import Playlist, Track
@@ -7,6 +9,7 @@ from spotify.spotify import ImportSpotifyPlaylistByUrl
 from ya_music.ya_music import ImportYandexMusicPlaylistByUrl
 
 
+@login_required
 def import_playlist_by_url(request):
     if request.method == 'POST':
         form = SearchPlaylistByUrlForm(request.POST)
@@ -44,6 +47,7 @@ def import_playlist_by_url(request):
     return render(request, 'playlist/search_playlist_by_url.html', {'form': form})
 
 
+@login_required
 def show_playlist(request, playlist_id):
     current_playlist = Playlist.objects.filter(id=playlist_id).first()
     tracks = Track.objects.filter(playlist=playlist_id).all()
@@ -56,13 +60,18 @@ def show_playlist(request, playlist_id):
     return render(request, 'playlist/playlist_detail.html', context=context)
 
 
+@login_required
 def delete_playlist(request, playlist_id, user_id):
     Playlist.objects.filter(id=playlist_id).delete()
 
     return redirect('profile', user_id=user_id)
 
 
+@login_required
 def delete_track(request, track_id, playlist_id):
     Track.objects.filter(id=track_id).delete()
+    playlist_to_update = Playlist.objects.filter(id=playlist_id).first()
+    playlist_to_update.last_update = datetime.now()
+    playlist_to_update.save()
 
     return redirect('playlist_detail', playlist_id=playlist_id)
