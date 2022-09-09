@@ -25,9 +25,10 @@ from .views import pageNotFound
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("admin/", admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("user/", include("accounts.urls")),
     path("playlist/", include("playlist.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),
 ]
 
 if settings.DEBUG:
