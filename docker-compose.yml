@@ -24,6 +24,47 @@ services:
     restart: unless-stopped
     volumes:
       - .:/code
+  selenium:
+    image: selenium/standalone-chrome:latest
+    platform: linux/amd64
+    ports:
+      - 4444:4444
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: unless-stopped
+  celery:
+    build: .
+    restart: always
+    command: celery -A any_sync.any_sync.celery worker --loglevel=info
+    volumes:
+      - .:/code
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - web
+      - db
+  dashboard:
+    container_name: dashboard
+    build: .
+    command: flower -A any_sync.any_sync.celery worker --port=5555 broker=redis://redis:6379/0
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - web
+      - celery
 
 volumes:
   postgres_data:
+
+networks:
+  backend:
+     driver: bridge
