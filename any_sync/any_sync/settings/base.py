@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "debug_toolbar",
     'widget_tweaks',
+    'django_celery_results',
 
     'accounts',
     'playlist',
@@ -161,3 +162,6 @@ CELERY_BROCKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
