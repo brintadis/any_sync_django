@@ -2,7 +2,7 @@ import os
 from celery import Celery
 
 # Set the default django settings for celery
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.environ.get('DJANGO_SETTINGS_MODULE'))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'any_sync.settings')
 
 # Init Celery application
 app = Celery('any_sync')

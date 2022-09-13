@@ -13,7 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
   web:
     build: .
-    command: python any_sync/manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     container_name: anysync_web
     depends_on:
       - db
@@ -36,7 +36,7 @@ services:
   celery:
     build: .
     restart: always
-    command: celery -A any_sync.any_sync worker -l info
+    command: celery -A any_sync worker -l info
     volumes:
       - .:/code
     environment:
@@ -51,7 +51,7 @@ services:
   dashboard:
     container_name: dashboard
     build: .
-    command: flower -A any_sync.any_sync worker --port=5555 broker=redis://redis:6379/0
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
     ports:
       - 5555:5555
     environment:
