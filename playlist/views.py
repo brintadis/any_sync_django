@@ -22,6 +22,7 @@ def import_playlist_by_url(request):
                     import_playlist = ImportSpotifyPlaylistByUrl(
                         playlist_url=playlist_url,
                         user=current_user,
+                        request=request
                     )
                     import_playlist.get_spotify_playlist_by_url()
                     return redirect('profile', user_id=current_user.id)

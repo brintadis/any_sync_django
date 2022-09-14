@@ -1,6 +1,6 @@
 import os
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 from datetime import datetime, timedelta
 
@@ -14,12 +14,13 @@ class ImportSpotifyPlaylistByUrl:
         playlist_url (`str`): An url of a playlist.
         user(`User model instance`): Current user instance.
     """
-    def __init__(self, playlist_url, user) -> None:
+    def __init__(self, playlist_url, user, request) -> None:
         self.playlist_url = playlist_url
         self.user = user
         self.auth_manager = SpotifyClientCredentials(
             client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
             client_secret=os.environ.get('SPOTIFY_CLIENT_SECRET'),
+            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(request=request)
         )
         self.sp = spotipy.Spotify(auth_manager=self.auth_manager)
 
@@ -88,3 +89,35 @@ class ImportSpotifyPlaylistByUrl:
             track_list.append(new_track)
 
         Track.objects.bulk_create(track_list)
+
+
+class SpotifyAuth:
+    def __init__(self, request, user_id) -> None:
+        self.auth_manager = SpotifyOAuth(
+            client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
+            client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
+            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(request),
+            redirect_uri=f"http://localhost:8000/user/profile/{user_id}",
+            scope="""user-library-read,
+                playlist-read-private,
+                playlist-modify-private,
+                playlist-modify-public,
+                user-read-private,
+                user-library-modify,
+                user-library-read""",
+            show_dialog=True,
+            open_browser=False,
+        ),
+
+
+class SyncPlaylists:
+    def __init__(self, request, user_id, playlist_ids, public_playlist):
+        self.auth_manager = SpotifyAuth(request, user_id),
+        self.sp = spotipy.Spotify(auth_manager=self.auth_manager),
+
+        self.playlist_ids = playlist_ids,
+        self.is_public_playlist = public_playlist,
+
+    def sync_playlists(self):
+        for playlist_id in self.playlist_ids:
+            print(playlist_id)

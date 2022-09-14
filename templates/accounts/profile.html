@@ -8,11 +8,11 @@
         <a href="{% url 'import_playlist_by_url' %}" type="button" class="btn btn-secondary">Импортировать плейлист</a>
         <div class="btn-group dropright">
             <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Синхронизация плейлистов
+                Экспортировать плейлист
             </button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="#"><i class="fa-brands fa-spotify mr-2"></i>Spotify</a>
-                <a class="dropdown-item" href="#"><i class="fa-brands fa-yandex pr-2 mr-2"></i>Yandex Music</a>
+                <a class="dropdown-item" href="{% url 'synchronization' user_id=user_id music_service='Spotify' %}"><i class="fa-brands fa-spotify mr-2"></i>Spotify</a>
+                <a class="dropdown-item" href="{% url 'synchronization' user_id=user_id music_service='Yandex Music' %}"><i class="fa-brands fa-yandex pr-2 mr-2"></i>Yandex Music</a>
             </div>
         </div>
         {% endif %}
