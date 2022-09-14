@@ -10,5 +10,5 @@ urlpatterns = [
         synchronization,
         name="synchronization"
     ),
-    path("sync_playlist/<int:user_id>", sync_playlist, name="sync_playlist"),
+    path("sync_playlist", sync_playlist, name="sync_playlist"),
 ]

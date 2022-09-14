@@ -41,11 +41,10 @@ def synchronization(request, music_service, user_id):
 
 
 @login_required
-def sync_playlist(request, user_id):
+def sync_playlist(request):
     if request.method == 'POST':
         form = SynchronizationForm(request.POST)
-        playlist_ids = form.cleaned_data['playlist']
-        print(playlist_ids)
+        print(request.POST.getlist("choices"))
         # music_service = request.POST.get("music_service")
         # public_playlist = request.POST.get("public_playlist") == "True"
         # print(playlist_ids)
