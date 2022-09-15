@@ -97,7 +97,7 @@ class SpotifyAuth:
             client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
             client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
             cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(request),
-            redirect_uri=f"http://localhost:8000/user/profile/{user_id}",
+            redirect_uri=os.environ.get("REDIRECT_URL"),
             scope="""user-library-read,
                 playlist-read-private,
                 playlist-modify-private,
@@ -106,18 +106,39 @@ class SpotifyAuth:
                 user-library-modify,
                 user-library-read""",
             show_dialog=True,
-            open_browser=False,
+            open_browser=True,
         ),
 
 
 class SyncPlaylists:
-    def __init__(self, request, user_id, playlist_ids, public_playlist):
-        self.auth_manager = SpotifyAuth(request, user_id),
-        self.sp = spotipy.Spotify(auth_manager=self.auth_manager),
+    def __init__(self, request, playlist_ids, public_playlist):
+        self.client_id = os.environ.get("SPOTIFY_CLIENT_ID")
+        self.client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
+        self.redirect_uri = os.environ.get("SPOTIFY_REDIRECT_URL")
+        self.request = request
+        self.playlist_ids = playlist_ids
+        self.public_playlist = public_playlist
 
-        self.playlist_ids = playlist_ids,
-        self.is_public_playlist = public_playlist,
+    def spotifyauth(self):
+        self.auth_manager = SpotifyOAuth(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(self.request),
+            redirect_uri=self.redirect_uri,
+            scope="""user-library-read,
+                playlist-read-private,
+                playlist-modify-private,
+                playlist-modify-public,
+                user-read-private,
+                user-library-modify,
+                user-library-read""",
+            show_dialog=True,
+            open_browser=True,
+        )
+
+        return self.auth_manager
 
     def sync_playlists(self):
+        self.sp = spotipy.Spotify(auth_manager=self.auth_manager)
         for playlist_id in self.playlist_ids:
             print(playlist_id)
