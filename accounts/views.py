@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from .forms import CustomUserCreationForm
@@ -52,8 +52,10 @@ def sync_playlist(request):
                 public_playlist=public_playlist,
             )
 
-            # sync_playlist.spotifyauth().get_authorize_url()
-            sync_playlist.spotifyauth().get_authorize_url
+            skipped_songs = sync_playlist.sync_playlists()
+            print(skipped_songs)
+
+            return HttpResponse("sadsa")
 
         elif music_service == "Yandex Music":
             pass

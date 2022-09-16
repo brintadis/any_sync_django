@@ -1,3 +1,4 @@
+import json
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -92,38 +93,22 @@ class ImportSpotifyPlaylistByUrl:
 
 
 class SpotifyAuth:
-    def __init__(self, request, user_id) -> None:
-        self.auth_manager = SpotifyOAuth(
-            client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
-            client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
-            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(request),
-            redirect_uri=os.environ.get("REDIRECT_URL"),
-            scope="""user-library-read,
-                playlist-read-private,
-                playlist-modify-private,
-                playlist-modify-public,
-                user-read-private,
-                user-library-modify,
-                user-library-read""",
-            show_dialog=True,
-            open_browser=True,
-        ),
-
-
-class SyncPlaylists:
-    def __init__(self, request, playlist_ids, public_playlist):
+    def __init__(self, request) -> None:
         self.client_id = os.environ.get("SPOTIFY_CLIENT_ID")
         self.client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
         self.redirect_uri = os.environ.get("SPOTIFY_REDIRECT_URL")
         self.request = request
-        self.playlist_ids = playlist_ids
-        self.public_playlist = public_playlist
 
-    def spotifyauth(self):
+    def spotipy_cache_handler(self):
+        self.cache_handler = spotipy.cache_handler.DjangoSessionCacheHandler(self.request)
+
+        return self.cache_handler
+
+    def spotipy_auth_manager(self):
         self.auth_manager = SpotifyOAuth(
             client_id=self.client_id,
             client_secret=self.client_secret,
-            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(self.request),
+            cache_handler=self.spotipy_cache_handler(),
             redirect_uri=self.redirect_uri,
             scope="""user-library-read,
                 playlist-read-private,
@@ -133,12 +118,73 @@ class SyncPlaylists:
                 user-library-modify,
                 user-library-read""",
             show_dialog=True,
-            open_browser=True,
+            open_browser=False,
         )
 
         return self.auth_manager
 
+    def get_auth_url(self):
+        return self.spotipy_auth_manager().get_authorize_url()
+
+
+class SyncPlaylists:
+    def __init__(self, request, playlist_ids, public_playlist):
+        self.request = request
+        self.playlist_ids = playlist_ids
+        self.public_playlist = public_playlist
+
     def sync_playlists(self):
-        self.sp = spotipy.Spotify(auth_manager=self.auth_manager)
+        sp = spotipy.Spotify(auth_manager=SpotifyAuth(self.request).spotipy_auth_manager())
+
+        spotify_user_id = sp.current_user()["id"]
+
+        all_skipped_songs = {}
         for playlist_id in self.playlist_ids:
             print(playlist_id)
+            playlist_to_create = Playlist.objects.filter(
+                id=playlist_id
+            ).first()
+            tracks = Track.objects.filter(
+                playlist=playlist_id,
+            )
+
+            # Searching Spotify for songs by title and artist
+            songs_uris = []
+            skipped_songs = []
+            for track in tracks:
+                search_results = sp.search(
+                    q=f"track:{track.track_name}, artist:{track.artist}",
+                    type="track",
+                )
+                print(json.dumps(search_results))
+                try:
+                    uri = search_results["tracks"]["items"][0]["uri"]
+                    songs_uris.append(uri)
+                except IndexError:
+                    print(
+                        f"{track.track_name} by {track.artist}\
+                        doesn't exist in Spotify. Skipped."
+                    )
+                    skipped_songs.append(
+                        {
+                            "artist": track.artist,
+                            "track_name": track.track_name,
+                        }
+                    )
+
+            all_skipped_songs[playlist_id] = skipped_songs
+
+            # Creating a private playlist
+            playlist = sp.user_playlist_create(
+                user=spotify_user_id,
+                name=playlist_to_create.playlist_name,
+                public=self.public_playlist,
+            )
+
+            # Adding songs found to the new playlist
+            sp.playlist_add_items(
+                playlist_id=playlist["id"],
+                items=songs_uris,
+            )
+
+        return all_skipped_songs

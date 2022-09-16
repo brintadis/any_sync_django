@@ -29,6 +29,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("user/", include("accounts.urls")),
     path("playlist/", include("playlist.urls")),
+    path("spotify/", include("spotify.urls")),
 ]
 
 if settings.DEBUG:
