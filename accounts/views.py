@@ -1,7 +1,8 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import CustomUserCreationForm
 from spotify.spotify import SyncPlaylists
@@ -45,7 +46,6 @@ def sync_playlist(request):
         music_service = request.POST.get("music_service")
         public_playlist = request.POST.get("public_playlist") == 'True'
         if music_service == "Spotify":
-            print("I'm here")
             sync_playlist = SyncPlaylists(
                 request=request,
                 playlist_ids=playlist_ids,
@@ -54,8 +54,14 @@ def sync_playlist(request):
 
             skipped_songs = sync_playlist.sync_playlists()
             print(skipped_songs)
-
-            return HttpResponse("sadsa")
+            message = "\n\n".join(
+                f"""Плейлист: {playlist}
+                Треки:
+                {", ".join(tracks) if len(tracks) != 1 else "".join(tracks)}"""
+                for playlist, tracks in skipped_songs.items()
+            )
+            messages.info(request, "Не удалось добавить треки:\n" + message)
+            return redirect("profile", user_id=request.user.id)
 
         elif music_service == "Yandex Music":
             pass

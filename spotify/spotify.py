@@ -1,4 +1,3 @@
-import json
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -156,7 +155,6 @@ class SyncPlaylists:
                     q=f"track:{track.track_name}, artist:{track.artist}",
                     type="track",
                 )
-                print(json.dumps(search_results))
                 try:
                     uri = search_results["tracks"]["items"][0]["uri"]
                     songs_uris.append(uri)
@@ -165,14 +163,9 @@ class SyncPlaylists:
                         f"{track.track_name} by {track.artist}\
                         doesn't exist in Spotify. Skipped."
                     )
-                    skipped_songs.append(
-                        {
-                            "artist": track.artist,
-                            "track_name": track.track_name,
-                        }
-                    )
+                    skipped_songs.append(f"{track.track_name} by {track.artist}")
 
-            all_skipped_songs[playlist_id] = skipped_songs
+            all_skipped_songs[playlist_to_create.playlist_name] = skipped_songs
 
             # Creating a private playlist
             playlist = sp.user_playlist_create(
