@@ -22,9 +22,9 @@ def import_playlist_by_url(request):
                     import_playlist = ImportSpotifyPlaylistByUrl(
                         playlist_url=playlist_url,
                         user=current_user,
-                        request=request
                     )
                     import_playlist.get_spotify_playlist_by_url()
+                    messages.info(request, "Плейлист успешно добавлен")
                     return redirect('profile', user_id=current_user.id)
                 except Exception:
                     messages.error(request, 'Несуществующий плейлист в Spotify')
@@ -36,6 +36,7 @@ def import_playlist_by_url(request):
                         user=current_user,
                     )
                     import_playlist.get_yandex_playlist_by_url()
+                    messages.info(request, "Плейлист успешно добавлен")
                     return redirect('profile', user_id=current_user.id)
                 except Exception:
                     messages.error(request, 'Несуществующий плейлист в Yandex Music')

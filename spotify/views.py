@@ -16,7 +16,6 @@ def start_spotify_auth(request):
 def spotify_auth(request):
     spotify_auth = SpotifyAuth(request)
     auth_manager = spotify_auth.spotipy_auth_manager()
-    token_info = auth_manager.get_access_token(request.GET.get("code"))
-    spotify_auth.spotipy_cache_handler().save_token_to_cache(token_info)
+    auth_manager.get_access_token(request.GET.get("code"))
 
     return redirect("synchronization", user_id=request.user.id, music_service="Spotify")

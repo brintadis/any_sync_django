@@ -7,6 +7,20 @@ from datetime import datetime, timedelta
 from playlist.models import Playlist, Track
 
 
+CACHES_FOLDER = "cache/spotify/spotify_caches/"
+if not os.path.exists(CACHES_FOLDER):
+    os.makedirs(CACHES_FOLDER)
+
+
+def session_cache_path(user_id):
+    """Sessian cache path handler
+
+    Returns:
+        os spotify_token_path
+    """
+    return CACHES_FOLDER + str(user_id)
+
+
 class ImportSpotifyPlaylistByUrl:
     """Importing a spotify's playlist by url, then saving into db
 
@@ -14,13 +28,12 @@ class ImportSpotifyPlaylistByUrl:
         playlist_url (`str`): An url of a playlist.
         user(`User model instance`): Current user instance.
     """
-    def __init__(self, playlist_url, user, request) -> None:
+    def __init__(self, playlist_url, user) -> None:
         self.playlist_url = playlist_url
         self.user = user
         self.auth_manager = SpotifyClientCredentials(
             client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
             client_secret=os.environ.get('SPOTIFY_CLIENT_SECRET'),
-            cache_handler=spotipy.cache_handler.DjangoSessionCacheHandler(request=request)
         )
         self.sp = spotipy.Spotify(auth_manager=self.auth_manager)
 
@@ -92,14 +105,16 @@ class ImportSpotifyPlaylistByUrl:
 
 
 class SpotifyAuth:
-    def __init__(self, request) -> None:
+    def __init__(self, user_id) -> None:
+        self.user_id = user_id
         self.client_id = os.environ.get("SPOTIFY_CLIENT_ID")
         self.client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
         self.redirect_uri = os.environ.get("SPOTIFY_REDIRECT_URL")
-        self.request = request
 
     def spotipy_cache_handler(self):
-        self.cache_handler = spotipy.cache_handler.DjangoSessionCacheHandler(self.request)
+        self.cache_handler = spotipy.cache_handler.CacheFileHandler(
+                cache_path=session_cache_path(user_id=self.user_id)
+            )
 
         return self.cache_handler
 
@@ -127,13 +142,13 @@ class SpotifyAuth:
 
 
 class SyncPlaylists:
-    def __init__(self, request, playlist_ids, public_playlist):
-        self.request = request
+    def __init__(self, user_id, playlist_ids, public_playlist):
+        self.user_id = user_id
         self.playlist_ids = playlist_ids
         self.public_playlist = public_playlist
 
     def sync_playlists(self):
-        sp = spotipy.Spotify(auth_manager=SpotifyAuth(self.request).spotipy_auth_manager())
+        sp = spotipy.Spotify(auth_manager=SpotifyAuth(self.user_id).spotipy_auth_manager())
 
         spotify_user_id = sp.current_user()["id"]
 

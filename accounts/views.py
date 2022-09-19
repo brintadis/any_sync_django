@@ -47,7 +47,7 @@ def sync_playlist(request):
         public_playlist = request.POST.get("public_playlist") == 'True'
         if music_service == "Spotify":
             sync_playlist = SyncPlaylists(
-                request=request,
+                user_id=request.user.id,
                 playlist_ids=playlist_ids,
                 public_playlist=public_playlist,
             )
