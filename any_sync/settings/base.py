@@ -53,6 +53,8 @@ INSTALLED_APPS = [
 
     'accounts',
     'playlist',
+    'spotify',
+    'ya_music',
 ]
 
 MIDDLEWARE = [

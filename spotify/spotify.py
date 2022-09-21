@@ -141,7 +141,7 @@ class SpotifyAuth:
         return self.spotipy_auth_manager().get_authorize_url()
 
 
-class SyncPlaylists:
+class SyncSpotifyPlaylists:
     def __init__(self, user_id, playlist_ids, public_playlist):
         self.user_id = user_id
         self.playlist_ids = playlist_ids

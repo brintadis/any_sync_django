@@ -30,6 +30,7 @@ urlpatterns = [
     path("user/", include("accounts.urls")),
     path("playlist/", include("playlist.urls")),
     path("spotify/", include("spotify.urls")),
+    path("yandex/", include("ya_music.urls")),
 ]
 
 if settings.DEBUG:

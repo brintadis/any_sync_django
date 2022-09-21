@@ -4,9 +4,15 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .forms import CustomUserCreationForm
-from spotify.spotify import SyncPlaylists
+from accounts.models import User
 from playlist.models import Playlist
+
+from .forms import CustomUserCreationForm
+
+from ya_music.ya_music import SyncYandexPlaylists, validate_token
+from spotify.spotify import SyncSpotifyPlaylists
+
+# from ya_music.tasks import sync_yandex
 
 
 class SignUpView(CreateView):
@@ -46,7 +52,7 @@ def sync_playlist(request):
         music_service = request.POST.get("music_service")
         public_playlist = request.POST.get("public_playlist") == 'True'
         if music_service == "Spotify":
-            sync_playlist = SyncPlaylists(
+            sync_playlist = SyncSpotifyPlaylists(
                 user_id=request.user.id,
                 playlist_ids=playlist_ids,
                 public_playlist=public_playlist,
@@ -54,15 +60,28 @@ def sync_playlist(request):
 
             skipped_songs = sync_playlist.sync_playlists()
             print(skipped_songs)
-            message = "\n\n".join(
-                f"""Плейлист: {playlist}
-                Треки:
-                {", ".join(tracks) if len(tracks) != 1 else "".join(tracks)}"""
-                for playlist, tracks in skipped_songs.items()
-            )
-            messages.info(request, "Не удалось добавить треки:\n" + message)
+            # message = "\n\n".join(
+            #     f"""Плейлист: {playlist}
+            #     Треки:
+            #     {", ".join(tracks) if len(tracks) != 1 else "".join(tracks)}"""
+            #     for playlist, tracks in skipped_songs.items()
+            # )
+            # messages.info(request, "Не удалось добавить треки:\n" + message)
             return redirect("profile", user_id=request.user.id)
 
         elif music_service == "Yandex Music":
-            pass
+            yandex_token = User.objects.filter(id=request.user.id).first().yandex_token
+            if validate_token(yandex_token):
+                visibility = ['public', 'private'][public_playlist]
+                sync_playlist = SyncYandexPlaylists(
+                    token=yandex_token,
+                    playlist_ids=playlist_ids,
+                    visibility=visibility,
+                )
+                sync_playlist.sync_playlists()
+                return redirect("profile", user_id=request.user.id)
+            else:
+                message = "Пользовательская информация устарела, необходимо повторить авторизацию."
+                messages.info(request, )
+                return redirect('yandex_auth')
     return HttpResponse("not post")

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+	<div class="col-4">
+		<h2 class="pt-3">Авторизация в Яндекс</h2>
+		<form action="{% url 'yandex_auth' %}" method="post">
+            {% csrf_token %}
+			{% load widget_tweaks %}
+			<div class="form-group">
+				<label for="email">Электронная почта:</label>
+                <br>
+				{% render_field form.email class="form-control" name="email" %}
+                <small id="emailHelp" class="form-text text-muted">
+                    Мы никогда не будем делиться вашей электронной почтой с кем-либо еще.
+                </small>
+			</div>
+			<div class="form-group">
+                <label for="password">Пароль:</label>
+				<br>
+				{% render_field form.password class="form-control" name="password" %}
+				<small id="authinfo1" class="form-text text-muted">
+                    Авторизация не работает для аккаунтов с включенной двухфакторной аутентификацией.
+					<a href="https://yandex.ru/support/id/authorization/twofa.html">Подробнее</a>
+                </small>
+				<small id="authinfo2" class="form-text text-muted">
+                    Пожалуйста не закрывайте окно в процессе авторизации.
+                </small>
+			</div>
+			<button type="submit" class="btn btn-primary">Отправить</button>
+		</form>
+	</div>
+</div>
+{% endblock %}
