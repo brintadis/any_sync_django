@@ -82,6 +82,6 @@ def sync_playlist(request):
                 return redirect("profile", user_id=request.user.id)
             else:
                 message = "Пользовательская информация устарела, необходимо повторить авторизацию."
-                messages.info(request, )
+                messages.info(request, message)
                 return redirect('yandex_auth')
     return HttpResponse("not post")
