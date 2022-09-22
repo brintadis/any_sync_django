@@ -4,7 +4,7 @@ from .ya_music import SyncYandexPlaylists
 
 
 @shared_task
-def sync_yandex(token, playlist_ids, visibility):
+def create_playlists_yandex(token, playlist_ids, visibility):
     sync_playlist = SyncYandexPlaylists(
         token=token,
         playlist_ids=playlist_ids,

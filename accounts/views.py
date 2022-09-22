@@ -9,10 +9,10 @@ from playlist.models import Playlist
 
 from .forms import CustomUserCreationForm
 
-from ya_music.ya_music import SyncYandexPlaylists, validate_token
-from spotify.spotify import SyncSpotifyPlaylists
+from ya_music.ya_music import validate_token
 
-# from ya_music.tasks import sync_yandex
+from ya_music.tasks import create_playlists_yandex
+from spotify.tasks import create_playlists_spotify
 
 
 class SignUpView(CreateView):
@@ -52,14 +52,12 @@ def sync_playlist(request):
         music_service = request.POST.get("music_service")
         public_playlist = request.POST.get("public_playlist") == 'True'
         if music_service == "Spotify":
-            sync_playlist = SyncSpotifyPlaylists(
+            create_playlists_spotify.delay(
                 user_id=request.user.id,
                 playlist_ids=playlist_ids,
-                public_playlist=public_playlist,
+                visibility=public_playlist,
             )
-
-            skipped_songs = sync_playlist.sync_playlists()
-            print(skipped_songs)
+            # print(skipped_songs)
             # message = "\n\n".join(
             #     f"""Плейлист: {playlist}
             #     Треки:
@@ -73,12 +71,11 @@ def sync_playlist(request):
             yandex_token = User.objects.filter(id=request.user.id).first().yandex_token
             if validate_token(yandex_token):
                 visibility = ['public', 'private'][public_playlist]
-                sync_playlist = SyncYandexPlaylists(
+                create_playlists_yandex(
                     token=yandex_token,
                     playlist_ids=playlist_ids,
                     visibility=visibility,
                 )
-                sync_playlist.sync_playlists()
                 return redirect("profile", user_id=request.user.id)
             else:
                 message = "Пользовательская информация устарела, необходимо повторить авторизацию."

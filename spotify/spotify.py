@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from playlist.models import Playlist, Track
 
 
-CACHES_FOLDER = "cache/spotify/spotify_caches/"
+CACHES_FOLDER = "spotify/spotify_caches/"
 if not os.path.exists(CACHES_FOLDER):
     os.makedirs(CACHES_FOLDER)
 
@@ -18,6 +18,7 @@ def session_cache_path(user_id):
     Returns:
         os spotify_token_path
     """
+    print(CACHES_FOLDER + str(user_id))
     return CACHES_FOLDER + str(user_id)
 
 
@@ -110,19 +111,15 @@ class SpotifyAuth:
         self.client_id = os.environ.get("SPOTIFY_CLIENT_ID")
         self.client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
         self.redirect_uri = os.environ.get("SPOTIFY_REDIRECT_URL")
-
-    def spotipy_cache_handler(self):
         self.cache_handler = spotipy.cache_handler.CacheFileHandler(
-                cache_path=session_cache_path(user_id=self.user_id)
-            )
-
-        return self.cache_handler
+            cache_path=session_cache_path(user_id=self.user_id)
+        )
 
     def spotipy_auth_manager(self):
         self.auth_manager = SpotifyOAuth(
             client_id=self.client_id,
             client_secret=self.client_secret,
-            cache_handler=self.spotipy_cache_handler(),
+            cache_handler=self.cache_handler,
             redirect_uri=self.redirect_uri,
             scope="""user-library-read,
                 playlist-read-private,
@@ -142,10 +139,10 @@ class SpotifyAuth:
 
 
 class SyncSpotifyPlaylists:
-    def __init__(self, user_id, playlist_ids, public_playlist):
+    def __init__(self, user_id, playlist_ids, visibility):
         self.user_id = user_id
         self.playlist_ids = playlist_ids
-        self.public_playlist = public_playlist
+        self.visibility = visibility
 
     def sync_playlists(self):
         sp = spotipy.Spotify(auth_manager=SpotifyAuth(self.user_id).spotipy_auth_manager())
@@ -186,7 +183,7 @@ class SyncSpotifyPlaylists:
             playlist = sp.user_playlist_create(
                 user=spotify_user_id,
                 name=playlist_to_create.playlist_name,
-                public=self.public_playlist,
+                public=self.visibility,
             )
 
             # Adding songs found to the new playlist

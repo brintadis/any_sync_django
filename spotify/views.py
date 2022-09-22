@@ -14,8 +14,10 @@ def start_spotify_auth(request):
 
 @login_required
 def spotify_auth(request):
-    spotify_auth = SpotifyAuth(request)
+    spotify_auth = SpotifyAuth(request.user.id)
+    code = request.GET.get('code')
     auth_manager = spotify_auth.spotipy_auth_manager()
-    auth_manager.get_access_token(request.GET.get("code"))
+    auth_manager.get_access_token(code, as_dict=True)
+    # print(token)
 
     return redirect("synchronization", user_id=request.user.id, music_service="Spotify")
