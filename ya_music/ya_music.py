@@ -15,6 +15,9 @@ from playlist.models import Playlist, Track
 
 
 class ImportYandexMusicPlaylistByUrl:
+    """
+    Import a playlist from Yandex Music by URL
+    """
     def __init__(self, playlist_url, user) -> None:
         self.playlist_url = playlist_url
         self.user = user
@@ -79,6 +82,9 @@ class ImportYandexMusicPlaylistByUrl:
 
 
 class YandexAuth:
+    """
+    Yandex authentication by email and password.
+    """
     def __init__(self, email, password) -> None:
         self.email = email
         self.password = password
