@@ -8,6 +8,9 @@ from django.conf import settings
 
 
 class CollageMaker:
+    """
+    Make a collage of the image using 4< other images
+    """
     def __init__(self, user) -> None:
         self.user = user
         self.media_root = settings.MEDIA_ROOT
