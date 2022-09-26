@@ -47,6 +47,9 @@ def synchronization(request, music_service, user_id):
 
 @login_required
 def sync_playlist(request):
+    """
+    Synchronize music playlists in selected music service(`request.POST.get("music_service")`).
+    """
     if request.method == 'POST':
         playlist_ids = request.POST.getlist("playlist_id")
         music_service = request.POST.get("music_service")
