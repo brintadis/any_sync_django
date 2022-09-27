@@ -35,6 +35,15 @@ def profile(request, user_id):
 
 @login_required
 def synchronization(request, music_service, user_id):
+    """_summary_
+
+    Args:
+        music_service (`str`): music service to create playlists in
+        user_id (`int`): current user id
+
+    Returns:
+        render template: render template
+    """
     playlists = Playlist.objects.filter(user=user_id).all()
     context = {
         "playlists": playlists,
