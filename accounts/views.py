@@ -23,6 +23,15 @@ class SignUpView(CreateView):
 
 @login_required
 def profile(request, user_id):
+    """User's profile page with visible playlists
+
+    Args:
+        user_id (_int_): current user id
+
+    Returns:
+        render template: render HTML page
+        
+    """
     playlists = Playlist.objects.filter(user=user_id).all()
 
     context = {
@@ -42,7 +51,7 @@ def synchronization(request, music_service, user_id):
         user_id (`int`): current user id
 
     Returns:
-        render template: render template
+        render template: render HTML page
     """
     playlists = Playlist.objects.filter(user=user_id).all()
     context = {
