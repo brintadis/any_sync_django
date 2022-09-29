@@ -71,6 +71,12 @@ def delete_playlist(request, playlist_id, user_id):
 
 @login_required
 def delete_track(request, track_id, playlist_id):
+    """Delete track and update Playlist last update time.
+
+    Args:
+        track_id (`int`): Track's id to delete
+        playlist_id (`int`): Playlist's id to update
+    """
     Track.objects.filter(id=track_id).delete()
     playlist_to_update = Playlist.objects.filter(id=playlist_id).first()
     playlist_to_update.last_update = datetime.now()
