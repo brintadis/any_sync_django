@@ -64,6 +64,12 @@ def show_playlist(request, playlist_id):
 
 @login_required
 def delete_playlist(request, playlist_id, user_id):
+    """Delete a playlist from the DB.
+
+    Args:
+        playlist_id (`int`): Playlist's id to update
+        user_id (`int`): current user id.
+    """
     Playlist.objects.filter(id=playlist_id).delete()
 
     return redirect('profile', user_id=user_id)
