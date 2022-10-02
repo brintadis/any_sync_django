@@ -11,6 +11,9 @@ from ya_music.ya_music import ImportYandexMusicPlaylistByUrl
 
 @login_required
 def import_playlist_by_url(request):
+    """
+    Import playlist by url form processing
+    """
     if request.method == 'POST':
         form = SearchPlaylistByUrlForm(request.POST)
         if form.is_valid():
