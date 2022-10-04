@@ -54,6 +54,11 @@ def import_playlist_by_url(request):
 
 @login_required
 def show_playlist(request, playlist_id):
+    """Playlist detail view
+
+    Args:
+        playlist_id (`int`): Playlist's id to show
+    """
     current_playlist = Playlist.objects.filter(id=playlist_id).first()
     tracks = Track.objects.filter(playlist=playlist_id).all()
 
