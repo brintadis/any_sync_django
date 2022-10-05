@@ -99,7 +99,7 @@ class CollageMaker:
             list_image_urls (_list_): Img urls
 
         Returns:
-            _list_: Return a `list` of img paths.
+            `list`: Return a `list` of img paths.
         """
         name_num = 1
         img_path_list = []
