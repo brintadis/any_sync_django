@@ -197,6 +197,14 @@ class YandexAuth:
 
 
 def validate_token(token):
+    """Validating token process
+
+    Args:
+        token (`str`): yandex auth token
+
+    Returns:
+        `Bool`: Has the token been validated?
+    """
     try:
         Client(token).init()
         return True
