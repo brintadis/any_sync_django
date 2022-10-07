@@ -9,7 +9,7 @@ from django.conf import settings
 
 class CollageMaker:
     """
-    Make a collage of the image using 4< other images
+    Make a collage of the image using 1< other images
     """
     def __init__(self, user) -> None:
         self.user = user
