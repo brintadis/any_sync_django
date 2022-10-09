@@ -139,6 +139,8 @@ class SpotifyAuth:
 
 
 class SyncSpotifyPlaylists:
+    """Create new spotify playlist
+    """
     def __init__(self, user_id, playlist_ids, visibility):
         self.user_id = user_id
         self.playlist_ids = playlist_ids
