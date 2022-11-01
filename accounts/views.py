@@ -92,7 +92,7 @@ def sync_playlist(request):
             yandex_token = User.objects.filter(id=request.user.id).first().yandex_token
             if validate_token(yandex_token):
                 visibility = ['public', 'private'][public_playlist]
-                create_playlists_yandex(
+                create_playlists_yandex.delay(
                     token=yandex_token,
                     playlist_ids=playlist_ids,
                     visibility=visibility,
